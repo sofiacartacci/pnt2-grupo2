@@ -1,47 +1,59 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div id="app">
+    <header>
+      <h1>Trabajo Integrador - Grupo 2</h1>
+      <nav>
+        <RouterLink to="/integrante1">Eduardo Ramiro Calaza</RouterLink>
+        <RouterLink to="/integrante2">Sofia Cartacci</RouterLink>
+        <RouterLink to="/integrante3">Ferreyra Juan Gabriel</RouterLink>
+        <RouterLink to="/integrante4">Mendez Monsalvo Martin</RouterLink>
+      </nav>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <main>
+      <RouterView />
+    </main>
+  </div>
 </template>
 
 <style scoped>
 header {
-  line-height: 1.5;
+  padding: 1rem 2rem;
+  background-color: #1a1a1a;
+  color: white;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+h1 {
+  margin: 0 0 1rem 0;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+nav {
+  display: flex;
+  gap: 1rem;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+nav a {
+  text-decoration: none;
+  color: #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+nav a:hover {
+  background-color: #333;
+  color: white;
+}
+
+nav a.router-link-active {
+  background-color: #42b883;
+  color: white;
+}
+
+main {
+  padding: 2rem;
 }
 </style>
