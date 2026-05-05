@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-    //Agregar logica del componente 
+    //Agregar dsp logica
 </script>
 
 <style scoped>
