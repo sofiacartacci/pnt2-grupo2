@@ -36,7 +36,6 @@ export const useComprasStore = defineStore("compras", {
       }
     },
 
-    // Vacía la selección
     limpiarSeleccion() {
       this.butacasSeleccionadas = [];
     },
