@@ -1,10 +1,23 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
+
 import LoginPopup from "./components/LoginPopup.vue";
 import { useAuthStore } from "./stores/authStore";
 
 const authStore = useAuthStore();
 const mostrarLogin = ref(false);
+const route = useRoute();
+
+watch(
+  () => route.query.login,
+  (valor) => {
+    if (valor === "true") {
+      mostrarLogin.value = true;
+    }
+  },
+  { immediate: true },
+);
 
 function abrirLogin() {
   mostrarLogin.value = true;

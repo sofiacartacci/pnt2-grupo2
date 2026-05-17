@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import RegistroView from "../view/RegistroView.vue";
 import Integrante2 from "../view/Integrante2.vue";
 import Integrante3 from "../view/Integrante3.vue";
@@ -18,6 +19,9 @@ const routes = [
     path: "/integrante3",
     name: "Integrante3",
     component: Integrante3,
+    meta: {
+      requiereLogin: true,
+    },
   },
   {
     path: "/integrante4",
@@ -34,6 +38,21 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+
+  if (to.meta.requiereLogin && !token) {
+    next({
+      path: "/",
+      query: {
+        login: "true",
+      },
+    });
+  } else {
+    next();
+  }
 });
 
 export default router;

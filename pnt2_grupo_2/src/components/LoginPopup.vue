@@ -47,10 +47,13 @@ const authStore = useAuthStore();
 const email = ref("");
 const password = ref("");
 
-function iniciarSesion() {
-  authStore.login(email.value, password.value);
+async function iniciarSesion() {
+  await authStore.login(email.value, password.value);
 
-  emit("cerrar");
+  if (authStore.token) {
+    emit("cerrar");
+  }
+  console.log("click iniciar sesión");
 }
 
 function irARegistro() {
