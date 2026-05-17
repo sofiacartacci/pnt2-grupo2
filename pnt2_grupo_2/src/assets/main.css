@@ -1,13 +1,30 @@
-body {
-  margin: 0;
-  background-color: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  min-height: 100vh;
+:root {
+
+  /* Fondos */
+  --color-fondo: #0a1a2f;
+  --color-superficie: #132c46;
+  --color-superficie-clara: #1c3a5a;
+
+  /* Acentos */
+  --color-acento: #00a3e0;
+  --color-acento-hover: #0089bd;
+
+  /* Texto */
+  --color-texto: #ffffff;
+  --color-texto-secundario: #aab8c5;
+  --color-texto-sobre-claro: #003b7a;
+
+  /* Estados */
+  --color-error: #ff6b6b;
+  --color-exito: #4caf50;
+
+  /* Tipografía */
+--fuente-principal: "Lato", "Segoe UI", Roboto, sans-serif;
+
+  /* Bordes */
+  --radio-borde: 12px;
 }
 
-#app {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
+body {
+  font-family: var(--fuente-principal);
 }

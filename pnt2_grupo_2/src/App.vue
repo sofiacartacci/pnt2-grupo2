@@ -36,8 +36,7 @@ function cerrarSesion() {
   <div id="app">
     <header>
       <div class="header-content">
-        <h1>Trabajo Integrador</h1>
-        <span class="subtitle">Grupo 2 · PNT2</span>
+        <h1>CineORT</h1>
       </div>
 
       <nav>
@@ -45,10 +44,10 @@ function cerrarSesion() {
         <RouterLink to="/integrante3">Juan Ferreyra</RouterLink>
         <RouterLink to="/integrante4">Martin Mendez</RouterLink>
 
-        <button v-if="!authStore.email" @click="abrirLogin">Login</button>
+        <button v-if="!authStore.isLoggedIn" @click="abrirLogin">Login</button>
 
         <div v-else class="usuario-box">
-          <span>{{ authStore.email }}</span>
+          <span>{{ authStore.user.nombre }}</span>
 
           <button @click="cerrarSesion">Logout</button>
         </div>
@@ -65,10 +64,10 @@ function cerrarSesion() {
 
 <style scoped>
 header {
-  background: linear-gradient(135deg, #1e3a8a 0%, #42b883 100%);
+  background-color: var(--color-fondo);
   padding: 2rem 3rem;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: var(--color-texto);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .header-content {
@@ -78,7 +77,7 @@ header {
 h1 {
   margin: 0;
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 900;
   letter-spacing: -0.5px;
 }
 
@@ -86,8 +85,8 @@ h1 {
   display: block;
   margin-top: 0.25rem;
   font-size: 0.9rem;
-  opacity: 0.85;
-  font-weight: 300;
+  color: var(--color-texto-secundario);
+  font-weight: 400;
 }
 
 nav {
@@ -100,12 +99,12 @@ nav {
 nav a,
 nav button {
   text-decoration: none;
-  color: white;
+  color: var(--color-texto);
   padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+  border-radius: var(--radio-borde);
   font-size: 0.9rem;
-  font-weight: 500;
-  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  background-color: var(--color-superficie);
   transition: all 0.2s ease;
   border: none;
   cursor: pointer;
@@ -113,14 +112,14 @@ nav button {
 
 nav a:hover,
 nav button:hover {
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: var(--color-superficie-clara);
   transform: translateY(-1px);
 }
 
 nav a.router-link-active {
-  background-color: white;
-  color: #1e3a8a;
-  font-weight: 600;
+  background-color: var(--color-acento);
+  color: var(--color-texto);
+  font-weight: 700;
 }
 
 .usuario-box {
@@ -131,11 +130,11 @@ nav a.router-link-active {
 
 .usuario-box span {
   padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+  border-radius: var(--radio-borde);
   font-size: 0.9rem;
-  font-weight: 500;
-  background-color: rgba(255, 255, 255, 0.18);
-  color: white;
+  font-weight: 700;
+  background-color: var(--color-acento);
+  color: var(--color-texto);
 }
 
 main {
