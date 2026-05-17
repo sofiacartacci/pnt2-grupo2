@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-const API_URL = 'https://6a03b7662afe8349b4b5717d.mockapi.io/api/v1'
+const API_URL = 'https://6a03b7662afe8349b4b5717d.mockapi.io/api/v1/usuarios'
 
 export const useAuthStore = defineStore('auth', () => {
   // ----- STATE -----
-  // user contiene { id, email, nombre, rol } cuando hay sesión, o null si no
   const user = ref(null)
 
   // ----- GETTERS -----
@@ -17,33 +16,81 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Inicia sesión con email + password.
   async function login(email, password) {
-    // TODO (Integrante 1):
-    // 1. GET a `${API_URL}/usuarios?email=${email}`
-    // 2. Validar que exista y que la password coincida
-    // 3. Setear user.value = datos del usuario
-    // 4. Guardar en localStorage para mantener la sesión
+    // 1. Pedimos a la API los usuarios con ese email
+    const res = await fetch(`${API_URL}/usuarios?email=${email}`)
+
+    // Si la API no responde con 200, algo falló
+    if (!res.ok) {
+      throw new Error('Error al conectar con el servidor')
+    }
+
+    const usuarios = await res.json()
+
+    // 2. MockAPI devuelve un array. Si está vacío, el email no existe.
+    if (usuarios.length === 0) {
+      throw new Error('El email no está registrado')
+    }
+
+    const usuarioEncontrado = usuarios[0]
+
+    // 3. Validamos la password
+    if (usuarioEncontrado.password !== password) {
+      throw new Error('Contraseña incorrecta')
+    }
+
+    // 4. Login exitoso: guardamos el usuario en el state
+    user.value = usuarioEncontrado
+
+    // 5. Guardamos en localStorage para mantener la sesión al recargar
+    localStorage.setItem('user', JSON.stringify(usuarioEncontrado))
   }
 
   // Registra un nuevo usuario (siempre como "cliente").
   async function register(datos) {
-    // TODO (Integrante 1):
-    // 1. POST a `${API_URL}/usuarios` con { email, password, nombre, rol: 'cliente' }
-    // 2. Setear user.value con la respuesta
-    // 3. Guardar en localStorage
+    // 1. Primero chequeamos que el email no esté ya en uso
+    const resCheck = await fetch(`${API_URL}/usuarios?email=${datos.email}`)
+    const existentes = await resCheck.json()
+
+    if (existentes.length > 0) {
+      throw new Error('Ese email ya está registrado')
+    }
+
+    // 2. Creamos el usuario con POST. El rol siempre es 'cliente'.
+    const nuevoUsuario = {
+      email: datos.email,
+      password: datos.password,
+      nombre: datos.nombre,
+      rol: 'cliente'
+    }
+
+    const res = await fetch(`${API_URL}/usuarios`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nuevoUsuario)
+    })
+
+    if (!res.ok) {
+      throw new Error('Error al registrar el usuario')
+    }
+
+    // 3. La API devuelve el usuario creado (con su id). Lo logueamos.
+    const usuarioCreado = await res.json()
+    user.value = usuarioCreado
+    localStorage.setItem('user', JSON.stringify(usuarioCreado))
   }
 
   // Cierra sesión.
   function logout() {
-    // TODO (Integrante 1):
-    // 1. user.value = null
-    // 2. Limpiar localStorage
+    user.value = null
+    localStorage.removeItem('user')
   }
 
   // Restaura la sesión desde localStorage al recargar la página.
   function restaurarSesion() {
-    // TODO (Integrante 1):
-    // 1. Leer localStorage
-    // 2. Si existe un usuario guardado, setear user.value
+    const guardado = localStorage.getItem('user')
+    if (guardado) {
+      user.value = JSON.parse(guardado)
+    }
   }
 
   return {
