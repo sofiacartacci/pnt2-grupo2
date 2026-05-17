@@ -1,4 +1,35 @@
 <script setup>
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
+
+import LoginPopup from "./components/LoginPopup.vue";
+import { useAuthStore } from "./stores/authStore";
+
+const authStore = useAuthStore();
+const mostrarLogin = ref(false);
+const route = useRoute();
+
+watch(
+  () => route.query.login,
+  (valor) => {
+    if (valor === "true") {
+      mostrarLogin.value = true;
+    }
+  },
+  { immediate: true },
+);
+
+function abrirLogin() {
+  mostrarLogin.value = true;
+}
+
+function cerrarLogin() {
+  mostrarLogin.value = false;
+}
+
+function cerrarSesion() {
+  authStore.logout();
+}
 </script>
 
 <template>
@@ -8,17 +39,27 @@
         <h1>Trabajo Integrador</h1>
         <span class="subtitle">Grupo 2 · PNT2</span>
       </div>
+
       <nav>
-        <RouterLink to="/integrante1">Eduardo Calaza</RouterLink>
         <RouterLink to="/integrante2">Sofia Cartacci</RouterLink>
         <RouterLink to="/integrante3">Juan Ferreyra</RouterLink>
         <RouterLink to="/integrante4">Martin Mendez</RouterLink>
+
+        <button v-if="!authStore.email" @click="abrirLogin">Login</button>
+
+        <div v-else class="usuario-box">
+          <span>{{ authStore.email }}</span>
+
+          <button @click="cerrarSesion">Logout</button>
+        </div>
       </nav>
     </header>
 
     <main>
       <RouterView />
     </main>
+
+    <LoginPopup v-if="mostrarLogin" @cerrar="cerrarLogin" />
   </div>
 </template>
 
@@ -53,9 +94,11 @@ nav {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
 }
 
-nav a {
+nav a,
+nav button {
   text-decoration: none;
   color: white;
   padding: 0.6rem 1.2rem;
@@ -64,9 +107,12 @@ nav a {
   font-weight: 500;
   background-color: rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
 }
 
-nav a:hover {
+nav a:hover,
+nav button:hover {
   background-color: rgba(255, 255, 255, 0.25);
   transform: translateY(-1px);
 }
@@ -75,6 +121,21 @@ nav a.router-link-active {
   background-color: white;
   color: #1e3a8a;
   font-weight: 600;
+}
+
+.usuario-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.usuario-box span {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.18);
+  color: white;
 }
 
 main {
