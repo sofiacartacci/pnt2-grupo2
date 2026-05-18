@@ -13,9 +13,13 @@
         <input v-model="email" type="email" placeholder="Correo electrónico*" />
 
         <div class="password-container">
-          <input v-model="password" type="password" placeholder="Contraseña*" />
+          <input
+            v-model="password"
+            :type="mostrarPassword ? 'text' : 'password'"
+            placeholder="Contraseña*"
+          />
 
-          <span class="eye-icon">👁</span>
+          <span class="eye-icon" @click="cambiarVisibilidadPassword"> 👁 </span>
         </div>
 
         <a href="#" class="forgot-password"> Olvidé mi contraseña </a>
@@ -48,6 +52,11 @@ const authStore = useAuthStore();
 
 const email = ref("");
 const password = ref("");
+const mostrarPassword = ref(false);
+
+function cambiarVisibilidadPassword() {
+  mostrarPassword.value = !mostrarPassword.value;
+}
 
 async function iniciarSesion() {
   await authStore.login(email.value, password.value);
@@ -177,7 +186,12 @@ function irARegistro() {
   right: 18px;
   top: 18px;
 
+  color: black;
+
   font-size: 14px;
+
+  cursor: pointer;
+  user-select: none;
 }
 
 .forgot-password {
