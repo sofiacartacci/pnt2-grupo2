@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 
+import HomeView from "../view/HomeView.vue";
 import RegistroView from "../view/RegistroView.vue";
 import Integrante2 from "../view/Integrante2.vue";
 import Integrante3 from "../view/Integrante3.vue";
@@ -9,7 +10,8 @@ import Integrante4 from "../view/Integrante4.vue";
 const routes = [
   {
     path: "/",
-    component: Integrante2,
+    name: "Home",
+    component: HomeView,
   },
   {
     path: "/integrante2",
@@ -58,7 +60,6 @@ router.beforeEach((to, from) => {
   if (to.meta.requiereAdmin && !auth.isAdmin) {
     return { path: "/" };
   }
-
 
   return true;
 });

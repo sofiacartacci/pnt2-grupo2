@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getUsuarios } from "../services/UsuariosServices";
+import { getUsuarios, crearUsuario } from "../services/UsuariosServices";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -34,8 +34,27 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    register(email, password) {
-      this.error = null;
+    async register(usuario) {
+      const usuarios = await getUsuarios();
+
+      const usuarioExistente = usuarios.find(
+        (unUsuario) => unUsuario.email === usuario.email,
+      );
+
+      if (usuarioExistente) {
+        this.error = "El email ya se encuentra registrado";
+
+        return false;
+      } else {
+        const usuarioCreado = await crearUsuario(usuario);
+
+        this.user = usuarioCreado;
+        this.error = null;
+
+        localStorage.setItem("user", JSON.stringify(this.user));
+
+        return true;
+      }
     },
 
     logout() {

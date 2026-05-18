@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
-
 import LoginPopup from "./components/LoginPopup.vue";
 import { useAuthStore } from "./stores/authStore";
 
