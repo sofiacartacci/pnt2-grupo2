@@ -2,12 +2,34 @@
   <section class="cartelera-section">
     <h2 class="cartelera-title">PELÍCULAS EN CARTELERA</h2>
 
-    <div class="peliculas-grid">
-      <article
-        v-for="pelicula in peliculas"
+        <div style="display:flex; gap:20px; margin-bottom:25px;">
+      <input
+        v-model="query"
+        type="text"
+        placeholder="Buscar..."
+        style="padding:8px; font-size:16px;"
+      />
+      <select v-model="filtroGenero" style="padding:8px; font-size:16px;">
+        <option value="">Todos los géneros</option>
+        <option v-for="g in generos" :key="g" :value="g">{{ g }}</option>
+      </select>
+
+      <select v-model="filtroClasificacion" style="padding:8px; font-size:16px;">
+        <option value="">Todas las clasificaciones</option>
+        <option v-for="c in clasificaciones" :key="c" :value="c">{{ c }}</option>
+      </select>
+    </div>
+    <div v-if="peliculasFiltradas.length === 0" style="font-size:20px; margin:20px 0;">
+      No hay películas que coincidan con los filtros seleccionados.
+      </div>
+      <div class="peliculas-grid">
+        <RouterLink
+        v-for="pelicula in peliculasFiltradas"
         :key="pelicula.id"
-        class="pelicula-card"
+        :to="`/cartelera/${pelicula.id}`"
+        class="pelicula-link"
       >
+      <article class = "pelicula-card">
         <img
           class="pelicula-poster"
           :src="`/src/assets/${pelicula.poster}`"
@@ -29,21 +51,39 @@
             {{ pelicula.genero }}
           </p>
         </div>
-      </article>
+        </article>
+      </RouterLink>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-
+import { ref, onMounted, computed } from "vue";
 import { getPeliculas } from "../services/PeliculasServices";
+import { RouterLink } from "vue-router"
 
 const peliculas = ref([]);
+const generos = ref([])
+const clasificaciones = ref([])
+const query = ref("")
+const filtroGenero = ref("")
+const filtroClasificacion = ref("")
 
 onMounted(async () => {
   peliculas.value = await getPeliculas();
+  generos.value = [...new Set(peliculas.value.map(p => p.genero))]
+  clasificaciones.value = [...new Set(peliculas.value.map(p => p.clasificacion))]
 });
+const peliculasFiltradas = computed(() => {
+  return peliculas.value.filter(p => {
+    const coincideBusqueda = p.titulo.toLowerCase().includes(query.value.toLowerCase())
+    const coincideGenero = !filtroGenero.value || p.genero === filtroGenero.value
+    const coincideClasificacion = !filtroClasificacion.value || p.clasificacion === filtroClasificacion.value
+
+    return coincideBusqueda && coincideGenero && coincideClasificacion
+  })
+})
+
 </script>
 
 <style scoped>
@@ -130,4 +170,12 @@ onMounted(async () => {
 
   font-size: 20px;
 }
+
+.pelicula-link {
+  text-decoration: none;
+  color: inherit;
+  display: block; /* mantiene el grid */
+}
+
+
 </style>

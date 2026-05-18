@@ -14,6 +14,11 @@ const routes = [
     component: HomeView,
   },
   {
+    path:"/cartelera/:id",
+    name:"pelicula-detalle",
+    component:()=>import("../view/PeliculaDetalleView.vue")
+  },
+  {
     path: "/integrante2",
     name: "Integrante2",
     component: Integrante2,
