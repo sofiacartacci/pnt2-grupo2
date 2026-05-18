@@ -5,6 +5,7 @@ import RegistroView from "../view/RegistroView.vue";
 import Integrante2 from "../view/Integrante2.vue";
 import Integrante3 from "../view/Integrante3.vue";
 import Integrante4 from "../view/Integrante4.vue";
+import AdminView from "../view/AdminView.vue";
 
 const routes = [
   {
@@ -37,6 +38,15 @@ const routes = [
     path: "/registro",
     name: "Registro",
     component: RegistroView,
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: AdminView,
+    meta: {
+      requiereLogin: true,
+      requiereAdmin: true,
+    },
   },
 ];
 

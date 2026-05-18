@@ -33,4 +33,32 @@ async function crearPelicula(pelicula) {
   return peliculaCreada;
 }
 
-export { getPeliculas, getPeliculaPorId, crearPelicula };
+async function modificarPelicula(id, pelicula) {
+  const respuesta = await fetch(`${URL_PELICULAS}/${id}`, {
+    method: "PUT",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(pelicula),
+  });
+
+  const peliculaModificada = await respuesta.json();
+
+  return peliculaModificada;
+}
+
+async function eliminarPelicula(id) {
+  await fetch(`${URL_PELICULAS}/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export {
+  getPeliculas,
+  getPeliculaPorId,
+  crearPelicula,
+  modificarPelicula,
+  eliminarPelicula,
+};
