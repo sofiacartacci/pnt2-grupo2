@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import LoginPopup from "./components/LoginPopup.vue";
 import { useAuthStore } from "./stores/authStore";
+import CarteleraPeliculas from "./components/CarteleraPeliculas.vue";
 
 const authStore = useAuthStore();
 const mostrarLogin = ref(false);
@@ -55,6 +56,7 @@ function cerrarSesion() {
 
     <main>
       <RouterView />
+      <CarteleraPeliculas />
     </main>
 
     <LoginPopup v-if="mostrarLogin" @cerrar="cerrarLogin" />
