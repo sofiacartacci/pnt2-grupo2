@@ -36,3 +36,6 @@ npm run dev
 ```sh
 npm run build
 ```
+
+// api usuarios: https://6a03b7662afe8349b4b5717d.mockapi.io/api/v1/usuarios
+// api peliculas: https://6a03b7662afe8349b4b5717d.mockapi.io/api/v1/peliculas

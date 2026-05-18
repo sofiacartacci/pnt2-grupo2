@@ -1,35 +1,66 @@
-import {createRouter, createWebHistory} from 'vue-router'
-import Integrante1 from '../view/Integrante1.vue'
-import Integrante2 from '../view/Integrante2.vue'
-import Integrante3 from '../view/Integrante3.vue'
-import Integrante4 from '../view/Integrante4.vue'   
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
+
+import RegistroView from "../view/RegistroView.vue";
+import Integrante2 from "../view/Integrante2.vue";
+import Integrante3 from "../view/Integrante3.vue";
+import Integrante4 from "../view/Integrante4.vue";
 
 const routes = [
   {
-    path: '/integrante1',
-    name: 'Integrante1',
-    component: Integrante1
+    path: "/",
+    component: Integrante2,
   },
   {
-    path: '/integrante2',
-    name: 'Integrante2',
-    component: Integrante2
+    path: "/integrante2",
+    name: "Integrante2",
+    component: Integrante2,
   },
   {
-    path: '/integrante3',
-    name: 'Integrante3',
-    component: Integrante3
+    path: "/integrante3",
+    name: "Integrante3",
+    component: Integrante3,
+    meta: {
+      requiereLogin: true,
+    },
   },
   {
-    path: '/integrante4',
-    name: 'Integrante4',
-    component: Integrante4
-  }
-]
+    path: "/integrante4",
+    name: "Integrante4",
+    component: Integrante4,
+    meta: {
+      requiereLogin: true,
+      requiereAdmin: true,
+    },
+  },
+  {
+    path: "/registro",
+    name: "Registro",
+    component: RegistroView,
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
-export default router
+router.beforeEach((to, from) => {
+  const auth = useAuthStore();
+
+  if (to.meta.requiereLogin && !auth.isLoggedIn) {
+    return {
+      path: "/",
+      query: { login: "true" },
+    };
+  }
+
+  if (to.meta.requiereAdmin && !auth.isAdmin) {
+    return { path: "/" };
+  }
+
+
+  return true;
+});
+
+export default router;

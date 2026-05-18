@@ -1,12 +1,10 @@
 <template>
   <div>
-    <h1>Integrante 2 - Sofia Cartacci</h1>
-    <p>....</p>
+    <h1>Sofia Cartacci</h1>
   </div>
 </template>
 
 <script setup>
-    //Agregar logica del componente 
 </script>
 
 <style scoped>
