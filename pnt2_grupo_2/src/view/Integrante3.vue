@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Integrante 4 - Martin Mendez</h1>
+    <h1>Integrante 3 - Juan Ferreyra</h1>
     <p>....</p>
   </div>
 </template>
