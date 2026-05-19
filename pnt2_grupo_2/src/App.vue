@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import LoginPopup from "./components/LoginPopup.vue";
 import { useAuthStore } from "./stores/authStore";
-import CarteleraPeliculas from "./components/CarteleraPeliculas.vue";
+import Footer from "./components/Footer.vue";
 
 const authStore = useAuthStore();
 const mostrarLogin = ref(false);
@@ -35,70 +35,107 @@ function cerrarSesion() {
 <template>
   <div id="app">
     <header>
-      <div class="header-content">
-        <h1>CineORT</h1>
-      </div>
+      <div class="header-wrapper">
+        <RouterLink to="/" class="logo-section">
+          <img src="https://www.ort.edu.ar/img/LogoOrtArgWeb2017.jpg" alt="ORT Logo" class="ort-logo" />
+        </RouterLink>
 
-      <nav>
-        <RouterLink to="/integrante2">Sofia Cartacci</RouterLink>
-        <RouterLink to="/integrante3">Juan Ferreyra</RouterLink>
-        <RouterLink to="/integrante4">Martin Mendez</RouterLink>
+        <nav class="nav-center">
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/Peliculas">Películas</RouterLink>
+          <RouterLink to="/butacas">Butacas</RouterLink>
+        </nav>
 
-        <button v-if="!authStore.isLoggedIn" @click="abrirLogin">Login</button>
+        <div class="nav-right">
+          <button v-if="!authStore.isLoggedIn" @click="abrirLogin">Login</button>
 
-        <div v-else class="usuario-box">
-          <span>{{ authStore.user.nombre }}</span>
-
-          <button @click="cerrarSesion">Logout</button>
+          <div v-else class="usuario-box">
+            <span>{{ authStore.user.nombre }}</span>
+            <button @click="cerrarSesion">Logout</button>
+          </div>
         </div>
-      </nav>
+      </div>
     </header>
 
     <main>
       <RouterView />
-      <CarteleraPeliculas />
     </main>
+
+    <Footer />
 
     <LoginPopup v-if="mostrarLogin" @cerrar="cerrarLogin" />
   </div>
 </template>
 
+<style>
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#app {
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+</style>
+
 <style scoped>
 header {
   background-color: var(--color-fondo);
-  padding: 2rem 3rem;
+  padding: 0.8rem 3rem;
   color: var(--color-texto);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  box-sizing: border-box;
 }
 
-.header-content {
-  margin-bottom: 1.5rem;
-}
-
-h1 {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-}
-
-.subtitle {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.9rem;
-  color: var(--color-texto-secundario);
-  font-weight: 400;
-}
-
-nav {
+.header-wrapper {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 3rem;
 }
 
-nav a,
-nav button {
+.logo-section {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.logo-section:hover {
+  opacity: 0.8;
+}
+
+.ort-logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-center a,
+.nav-right button {
   text-decoration: none;
   color: var(--color-texto);
   padding: 0.6rem 1.2rem;
@@ -109,18 +146,26 @@ nav button {
   transition: all 0.2s ease;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-nav a:hover,
-nav button:hover {
+.nav-center a:hover,
+.nav-right button:hover {
   background-color: var(--color-superficie-clara);
   transform: translateY(-1px);
 }
 
-nav a.router-link-active {
+.nav-center a.router-link-active {
   background-color: var(--color-acento);
   color: var(--color-texto);
   font-weight: 700;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .usuario-box {
@@ -140,7 +185,52 @@ nav a.router-link-active {
 
 main {
   padding: 2.5rem 3rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 0.8rem 1.5rem;
+  }
+
+  .header-wrapper {
+    padding: 0;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .logo-section {
+    order: 1;
+  }
+
+  .nav-center {
+    order: 3;
+    flex-basis: 100%;
+    gap: 0.4rem;
+  }
+
+  .nav-right {
+    order: 2;
+  }
+
+  .ort-logo {
+    height: 40px;
+  }
+
+  .nav-center a,
+  .nav-right button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .usuario-box {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  main {
+    padding: 1.5rem;
+  }
 }
 </style>

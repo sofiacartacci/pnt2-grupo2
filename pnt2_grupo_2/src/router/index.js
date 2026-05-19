@@ -3,9 +3,9 @@ import { useAuthStore } from "../stores/authStore";
 
 import HomeView from "../view/HomeView.vue";
 import RegistroView from "../view/RegistroView.vue";
-import Integrante2 from "../view/Integrante2.vue";
-import Integrante3 from "../view/Integrante3.vue";
-import Integrante4 from "../view/Integrante4.vue";
+import Peliculas from "../view/Peliculas.vue";
+import butacas from "../view/butacas.vue";
+import Integrante4 from "../view/cines.vue";
 
 const routes = [
   {
@@ -19,14 +19,14 @@ const routes = [
     component:()=>import("../view/PeliculaDetalleView.vue")
   },
   {
-    path: "/integrante2",
-    name: "Integrante2",
-    component: Integrante2,
+    path: "/Peliculas",
+    name: "Peliculas",
+    component: Peliculas,
   },
   {
-    path: "/integrante3",
-    name: "Integrante3",
-    component: Integrante3,
+    path: "/butacas",
+    name: "butacas",
+    component: butacas,
     meta: {
       requiereLogin: true,
     },
