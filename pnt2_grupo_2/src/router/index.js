@@ -1,26 +1,38 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 
+import HomeView from "../view/HomeView.vue";
 import RegistroView from "../view/RegistroView.vue";
-import Integrante2 from "../view/Integrante2.vue";
-import Integrante3 from "../view/Integrante3.vue";
-import Integrante4 from "../view/Integrante4.vue";
+import Peliculas from "../view/Peliculas.vue";
+import butacas from "../view/butacas.vue";
+import Integrante4 from "../view/cines.vue";
 import AdminView from "../view/AdminView.vue";
 
 const routes = [
   {
     path: "/",
-    component: Integrante2,
+    name: "Home",
+    component: HomeView,
   },
   {
-    path: "/integrante2",
-    name: "Integrante2",
-    component: Integrante2,
+    path:"/cartelera/:id",
+    name:"pelicula-detalle",
+    component:()=>import("../view/PeliculaDetalleView.vue")
   },
   {
-    path: "/integrante3",
-    name: "Integrante3",
-    component: Integrante3,
+    path: "/Peliculas",
+    name: "Peliculas",
+    component: Peliculas,
+  },
+  {
+    path: "/cines",
+    name: "Cines",
+    component: Integrante4,
+  },
+  {
+    path: "/butacas",
+    name: "butacas",
+    component: butacas,
     meta: {
       requiereLogin: true,
     },
@@ -68,7 +80,6 @@ router.beforeEach((to, from) => {
   if (to.meta.requiereAdmin && !auth.isAdmin) {
     return { path: "/" };
   }
-
 
   return true;
 });
