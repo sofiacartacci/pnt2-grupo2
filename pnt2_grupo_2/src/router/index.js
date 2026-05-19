@@ -24,6 +24,11 @@ const routes = [
     component: Peliculas,
   },
   {
+    path: "/cines",
+    name: "Cines",
+    component: Integrante4,
+  },
+  {
     path: "/butacas",
     name: "butacas",
     component: butacas,

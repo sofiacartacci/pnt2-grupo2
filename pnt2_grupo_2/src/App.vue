@@ -44,6 +44,7 @@ function cerrarSesion() {
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/Peliculas">Películas</RouterLink>
           <RouterLink to="/butacas">Butacas</RouterLink>
+          <RouterLink to="/cines">Cines</RouterLink>
         </nav>
 
         <div class="nav-right">
