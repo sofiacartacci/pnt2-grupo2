@@ -49,9 +49,6 @@
               <span class="clasificacion">
                 {{ pelicula.clasificacion }}
               </span>
-              <button class="trailer-button" @click="abrirTrailer(pelicula)">
-                VER TRAILER
-              </button>
             </div>
 
             <p class="duracion">{{ pelicula.duracion }} min</p>

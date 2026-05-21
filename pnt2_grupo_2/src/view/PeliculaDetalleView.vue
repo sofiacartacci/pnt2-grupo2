@@ -1,17 +1,12 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-
 import { getPeliculas } from "../services/PeliculasServices.js";
-
 import VideoPopup from "../components/VideoPopup.vue";
 
 const route = useRoute();
-
 const pelicula = ref(null);
-
 const mostrarTrailer = ref(false);
-
 const cargarPelicula = async () => {
   const todas = await getPeliculas();
 
@@ -49,7 +44,7 @@ function cerrarTrailer() {
         class="poster-image"
       />
 
-      <button class="trailer-button" @click="abrirTrailer">▶</button>
+      <button class="trailer-button" @click="abrirTrailer">▶Ver</button>
     </div>
 
     <p><strong>Género:</strong> {{ pelicula.genero }}</p>
@@ -111,28 +106,23 @@ function cerrarTrailer() {
 .trailer-button {
   position: absolute;
 
-  right: 14px;
-  bottom: 14px;
+  right: 4px;
+  bottom: 4px;
 
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 35px;
 
   border: none;
   border-radius: 10px;
 
-  background-color: #ff0000;
+  background-color: #fe3a3a;
   color: white;
-
-  font-size: 18px;
-
+  font-size: 15px;
   cursor: pointer;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-
   transition: transform 0.2s ease;
 }
 
