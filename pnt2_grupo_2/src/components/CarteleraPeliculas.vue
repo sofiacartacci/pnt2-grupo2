@@ -16,7 +16,9 @@
 
       <select v-model="filtroClasificacion" class="filtro-select">
         <option value="">Todas las clasificaciones</option>
-        <option v-for="c in clasificaciones" :key="c" :value="c">{{ c }}</option>
+        <option v-for="c in clasificaciones" :key="c" :value="c">
+          {{ c }}
+        </option>
       </select>
     </div>
 
@@ -32,11 +34,14 @@
         class="pelicula-link"
       >
         <article class="pelicula-card">
-          <img
-            class="pelicula-poster"
-            :src="`/src/assets/${pelicula.poster}`"
-            :alt="pelicula.titulo"
-          />
+          <div class="poster-wrapper">
+            <img
+              class="pelicula-poster"
+              :src="`/src/assets/${pelicula.poster}`"
+              :alt="pelicula.titulo"
+            />
+            <VideoPlayerPopup :pelicula="pelicula" @click.prevent />
+          </div>
 
           <div class="pelicula-info">
             <div class="pelicula-header">
@@ -44,11 +49,14 @@
               <span class="clasificacion">
                 {{ pelicula.clasificacion }}
               </span>
+              <button class="trailer-button" @click="abrirTrailer(pelicula)">
+                VER TRAILER
+              </button>
             </div>
 
             <p class="duracion">{{ pelicula.duracion }} min</p>
             <p class="genero">{{ pelicula.genero }}</p>
-            
+
             <button class="btn-trailer" @click.prevent="abrirDetalle(pelicula)">
               ▶ Ver más
             </button>
@@ -57,6 +65,12 @@
       </RouterLink>
     </div>
   </section>
+  <VideoPlayerPopup
+    v-if="peliculaSeleccionada"
+    :titulo="peliculaSeleccionada.titulo"
+    :videoUrl="peliculaSeleccionada.trailer"
+    @cerrar="cerrarTrailer"
+  />
 </template>
 
 <script setup>
@@ -71,11 +85,14 @@ const clasificaciones = ref([]);
 const query = ref("");
 const filtroGenero = ref("");
 const filtroClasificacion = ref("");
+const peliculaSeleccionada = ref(null);
 
 onMounted(async () => {
   peliculas.value = await getPeliculas();
   generos.value = [...new Set(peliculas.value.map((p) => p.genero))];
-  clasificaciones.value = [...new Set(peliculas.value.map((p) => p.clasificacion))];
+  clasificaciones.value = [
+    ...new Set(peliculas.value.map((p) => p.clasificacion)),
+  ];
 });
 
 const peliculasFiltradas = computed(() => {
@@ -95,6 +112,14 @@ const peliculasFiltradas = computed(() => {
 
 function abrirDetalle(pelicula) {
   router.push(`/cartelera/${pelicula.id}`);
+}
+
+function abrirTrailer(pelicula) {
+  peliculaSeleccionada.value = pelicula;
+}
+
+function cerrarTrailer() {
+  peliculaSeleccionada.value = null;
 }
 </script>
 
@@ -164,12 +189,17 @@ function abrirDetalle(pelicula) {
   transform: translateY(-4px);
 }
 
+.poster-wrapper {
+  position: relative;
+  height: 300px;
+  flex-shrink: 0;
+}
+
 .pelicula-poster {
   width: 100%;
-  height: 300px;
+  height: 100%;
   display: block;
   object-fit: cover;
-  flex-shrink: 0;
 }
 
 .pelicula-info {
@@ -243,5 +273,27 @@ function abrirDetalle(pelicula) {
 
 .btn-trailer:active {
   transform: scale(0.98);
+}
+
+.trailer-button {
+  width: 100%;
+  height: 46px;
+
+  margin-top: 18px;
+
+  border: none;
+  border-radius: 10px;
+
+  background-color: #00a3e0;
+  color: white;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.trailer-button:hover {
+  background-color: #008ec2;
 }
 </style>
