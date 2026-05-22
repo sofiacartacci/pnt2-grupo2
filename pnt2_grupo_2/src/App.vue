@@ -30,6 +30,16 @@ function cerrarLogin() {
 function cerrarSesion() {
   authStore.logout();
 }
+
+const mostrarMenu = ref(false);
+
+function toggleMenu() {
+  mostrarMenu.value = !mostrarMenu.value;
+}
+
+function cerrarMenu() {
+  mostrarMenu.value = false;
+}
 </script>
 
 <template>
@@ -51,7 +61,15 @@ function cerrarSesion() {
           <button v-if="!authStore.isLoggedIn" @click="abrirLogin">Login</button>
 
           <div v-else class="usuario-box">
-            <span>{{ authStore.user.nombre }}</span>
+            <button @click="toggleMenu" class="boton-usuario">
+              {{ authStore.user.nombre }}
+            </button>
+            <div v-if="mostrarMenu" class="menu-desplegable">
+              <RouterLink v-if="authStore.isAdmin" to="/admin" @click="cerrarMenu">
+                Panel de administrador
+              </RouterLink>
+            </div>
+
             <button @click="cerrarSesion">Logout</button>
           </div>
         </div>
@@ -69,7 +87,8 @@ function cerrarSesion() {
 </template>
 
 <style>
-html, body {
+html,
+body {
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
@@ -188,6 +207,41 @@ main {
   padding: 2.5rem 3rem;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+.usuario-box {
+  position: relative;
+}
+
+.boton-usuario {
+  background-color: var(--color-acento) !important;
+}
+
+.menu-desplegable {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: var(--color-superficie);
+  border-radius: var(--radio-borde);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  z-index: 100;
+  min-width: 200px;
+}
+
+.menu-desplegable a {
+  display: block;
+  text-decoration: none;
+  color: var(--color-texto);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radio-borde);
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.menu-desplegable a:hover {
+  background-color: var(--color-superficie-clara);
 }
 
 @media (max-width: 768px) {
