@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import { getFuncionPorId, modificarFuncion } from "../services/FuncionesServices";
+import { getFunciones, modificarFuncion } from "../services/FuncionesServices";
 import { crearCompra } from "../services/ComprasServices";
 
 export const useComprasStore = defineStore("compras", {
@@ -21,7 +21,8 @@ export const useComprasStore = defineStore("compras", {
 
   actions: {
     async cargarFuncion(id) {
-      this.funcion = await getFuncionPorId(id);
+      const funciones = await getFunciones();
+      this.funcion = funciones.find((f) => String(f.id) === String(id));
       this.butacasSeleccionadas = [];
       this.error = null;
     },

@@ -2,9 +2,11 @@
   <section class="cines-section">
     <h2 class="cines-title">NUESTROS CINES</h2>
 
-    <div class="cines-grid">
+    <p v-if="cargando" class="cargando-msg">Cargando cines...</p>
+
+    <div v-else class="cines-grid">
       <article v-for="cine in cines" :key="cine.id" class="cine-card">
-        <img class="cine-poster" :src="cine.imagen" :alt="cine.nombre" />
+        <img class="cine-poster" :src="imagenPorBarrio(cine.barrio)" :alt="cine.nombre" />
 
         <div class="cine-info">
           <div class="cine-header">
@@ -15,7 +17,7 @@
           <p class="cine-dato">📍 {{ cine.direccion }}</p>
           <p class="cine-dato">📞 {{ cine.telefono }}</p>
           <p class="cine-dato">🕐 {{ cine.horario }}</p>
-          <p class="cine-dato">🎬 {{ cine.salas }} salas disponibles</p>
+          <p class="cine-dato">🎬 {{ cine.salasDisponibles }} salas disponibles</p>
 
           <button class="btn-reservar" @click="reservar(cine)">
             Reservar entrada
@@ -27,33 +29,34 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { getCines } from "../services/CinesServices";
+import { useCineStore } from "../stores/cineStore";
 
-const cines = ref([
-  {
-    id: 1,
-    nombre: "CineORT Almagro",
-    barrio: "Almagro",
-    direccion: "Av. Acoyte 355, C1405 CABA",
-    telefono: "(011) 4600-1000",
-    horario: "Lunes a Domingo: 10:00 - 23:00",
-    salas: 4,
-    imagen: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop"
-  },
-  {
-    id: 2,
-    nombre: "CineORT Belgrano",
-    barrio: "Belgrano",
-    direccion: "Av. Sarmiento 2085, C1425 CABA",
-    telefono: "(011) 4806-0000",
-    horario: "Lunes a Domingo: 10:00 - 23:00",
-    salas: 5,
-    imagen: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?w=500&h=300&fit=crop"
-  }
-]);
+const router = useRouter();
+const cineStore = useCineStore();
+
+const cines = ref([]);
+const cargando = ref(true);
+
+const imagenesCines = {
+  Almagro: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop",
+  Belgrano: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?w=500&h=300&fit=crop",
+};
+
+function imagenPorBarrio(barrio) {
+  return imagenesCines[barrio] || "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop";
+}
+
+onMounted(async () => {
+  cines.value = await getCines();
+  cargando.value = false;
+});
 
 function reservar(cine) {
-  alert(`Redirigiendo a reserva para ${cine.nombre}...`);
+  cineStore.setCine(cine);
+  router.push("/Peliculas");
 }
 </script>
 
@@ -71,6 +74,12 @@ function reservar(cine) {
   font-size: 42px;
   font-weight: 900;
   text-align: center;
+}
+
+.cargando-msg {
+  text-align: center;
+  color: #666;
+  font-size: 18px;
 }
 
 .cines-grid {
