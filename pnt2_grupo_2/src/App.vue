@@ -33,7 +33,7 @@ function cerrarSesion() {
 </script>
 
 <template>
-  <div id="app">
+  <div id="app" class="app-wrapper">
     <header>
       <div class="header-wrapper">
         <RouterLink to="/" class="logo-section">
@@ -76,6 +76,7 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
+  height: 100%;
   box-sizing: border-box;
 }
 
@@ -87,6 +88,16 @@ body {
   width: 100vw;
   margin: 0;
   padding: 0;
+}
+
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-wrapper main {
+  flex: 1;
 }
 </style>
 
@@ -165,7 +176,6 @@ header {
   font-weight: 700;
 }
 
-/* Botón de admin diferenciado */
 .link-admin {
   background-color: #7cb342 !important;
   color: white !important;
@@ -205,6 +215,7 @@ main {
   padding: 2.5rem 3rem;
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
 }
 
 @media (max-width: 768px) {

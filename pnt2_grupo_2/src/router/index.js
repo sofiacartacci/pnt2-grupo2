@@ -7,6 +7,9 @@ import Peliculas from "../view/Peliculas.vue";
 import butacas from "../view/butacas.vue";
 import Integrante4 from "../view/cines.vue";
 import AdminView from "../view/AdminView.vue";
+import SobreNosotros from "@/view/SobreNosotros.vue";
+import PoliticasPrivacidad from "@/view/PoliticasPrivacidad.vue";
+import TerminosCondiciones from "@/view/TerminosCondiciones.vue";
 
 const routes = [
   {
@@ -51,6 +54,21 @@ const routes = [
     name: "Registro",
     component: RegistroView,
   },
+  {
+  path: "/sobre-nosotros",
+  name: "SobreNosotros",
+  component: SobreNosotros,
+},
+{
+  path: "/politicas-privacidad",
+  name: "PoliticasPrivacidad",
+  component: PoliticasPrivacidad,
+},
+{
+  path: "/terminos-condiciones",
+  name: "TerminosCondiciones",
+  component: TerminosCondiciones,
+},
   {
     path: "/admin",
     name: "Admin",

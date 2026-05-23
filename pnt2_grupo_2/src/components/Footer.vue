@@ -44,20 +44,17 @@
           <ul class="footer-links">
             <li><RouterLink to="/">Home</RouterLink></li>
             <li><RouterLink to="/Peliculas">Películas</RouterLink></li>
-            <li><RouterLink to="/butacas">Butacas</RouterLink></li>
-            <li><RouterLink to="/integrante4">Panel Admin</RouterLink></li>
           </ul>
         </div>
 
-        <div class="footer-section">
-          <h4 class="footer-subtitle">Información</h4>
-          <ul class="footer-links">
-            <li><a href="#">Sobre Nosotros</a></li>
-            <li><a href="#">Políticas de Privacidad</a></li>
-            <li><a href="#">Términos y Condiciones</a></li>
-            <li><a href="#">Contacto</a></li>
-          </ul>
-        </div>
+<div class="footer-section">
+  <h4 class="footer-subtitle">Información</h4>
+  <ul class="footer-links">
+    <li><RouterLink to="/sobre-nosotros">Sobre Nosotros</RouterLink></li>
+    <li><RouterLink to="/politicas-privacidad">Políticas de Privacidad</RouterLink></li>
+    <li><RouterLink to="/terminos-condiciones">Términos y Condiciones</RouterLink></li>
+  </ul>
+</div>
 
         <div class="footer-section">
           <h4 class="footer-subtitle">Contacto</h4>
