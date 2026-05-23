@@ -19,7 +19,7 @@
 <script setup>
 import { ref } from "vue";
 import { useComprasStore } from "../stores/comprasStore";
-import { useAuthStore } from "../stores/AuthStore";
+import { useAuthStore } from "../stores/authStore";
 
 const comprasStore = useComprasStore();
 const authStore = useAuthStore();

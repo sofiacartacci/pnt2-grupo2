@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import { useComprasStore } from "../stores/comprasStore";
 import { useAuthStore } from "../stores/authStore";
 
 const comprasStore = useComprasStore();
 const authStore = useAuthStore();
+const route = useRoute();
 
 const paso = ref("butacas");
 
@@ -18,7 +20,8 @@ const filas = ["A", "B", "C", "D", "E"];
 const columnas = [1, 2, 3, 4, 5, 6, 7, 8];
 
 onMounted(() => {
-  comprasStore.cargarFuncion("1");
+  const funcionId = route.query.funcionId || "1";
+  comprasStore.cargarFuncion(String(funcionId));
 });
 
 function estadoButaca(codigo) {
