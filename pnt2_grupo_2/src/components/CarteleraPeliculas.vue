@@ -84,6 +84,13 @@ const filtroGenero = ref("");
 const filtroClasificacion = ref("");
 const peliculaSeleccionada = ref(null);
 
+function normalizar(texto) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 onMounted(async () => {
   peliculas.value = await getPeliculas();
   generos.value = [...new Set(peliculas.value.map((p) => p.genero))];
@@ -94,9 +101,9 @@ onMounted(async () => {
 
 const peliculasFiltradas = computed(() => {
   return peliculas.value.filter((p) => {
-    const coincideBusqueda = p.titulo
-      .toLowerCase()
-      .includes(query.value.toLowerCase());
+    const coincideBusqueda = normalizar(p.titulo).includes(
+      normalizar(query.value)
+    );
     const coincideGenero =
       !filtroGenero.value || p.genero === filtroGenero.value;
     const coincideClasificacion =
