@@ -30,20 +30,10 @@ function cerrarLogin() {
 function cerrarSesion() {
   authStore.logout();
 }
-
-const mostrarMenu = ref(false);
-
-function toggleMenu() {
-  mostrarMenu.value = !mostrarMenu.value;
-}
-
-function cerrarMenu() {
-  mostrarMenu.value = false;
-}
 </script>
 
 <template>
-  <div id="app" class="app-wrapper">
+  <div id="app">
     <header>
       <div class="header-wrapper">
         <RouterLink to="/" class="logo-section">
@@ -54,21 +44,16 @@ function cerrarMenu() {
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/Peliculas">Películas</RouterLink>
           <RouterLink to="/cines">Cines</RouterLink>
+          <RouterLink v-if="authStore.isAdmin" to="/admin" class="link-admin">
+            📊 Estadísticas
+          </RouterLink>
         </nav>
 
         <div class="nav-right">
           <button v-if="!authStore.isLoggedIn" @click="abrirLogin">Login</button>
 
           <div v-else class="usuario-box">
-            <button @click="toggleMenu" class="boton-usuario">
-              {{ authStore.user.nombre }}
-            </button>
-            <div v-if="mostrarMenu" class="menu-desplegable">
-              <RouterLink v-if="authStore.isAdmin" to="/admin" @click="cerrarMenu">
-                Panel de administrador
-              </RouterLink>
-            </div>
-
+            <span class="nombre-usuario">{{ authStore.user.nombre }}</span>
             <button @click="cerrarSesion">Logout</button>
           </div>
         </div>
@@ -91,7 +76,6 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
-  height: 100%;
   box-sizing: border-box;
 }
 
@@ -103,16 +87,6 @@ body {
   width: 100vw;
   margin: 0;
   padding: 0;
-}
-
-.app-wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.app-wrapper main {
-  flex: 1;
 }
 </style>
 
@@ -191,6 +165,20 @@ header {
   font-weight: 700;
 }
 
+/* Botón de admin diferenciado */
+.link-admin {
+  background-color: #7cb342 !important;
+  color: white !important;
+}
+
+.link-admin:hover {
+  background-color: #558b2f !important;
+}
+
+.link-admin.router-link-active {
+  background-color: #558b2f !important;
+}
+
 .nav-right {
   display: flex;
   align-items: center;
@@ -204,7 +192,7 @@ header {
   gap: 0.5rem;
 }
 
-.usuario-box span {
+.nombre-usuario {
   padding: 0.6rem 1.2rem;
   border-radius: var(--radio-borde);
   font-size: 0.9rem;
@@ -217,42 +205,6 @@ main {
   padding: 2.5rem 3rem;
   max-width: 1400px;
   margin: 0 auto;
-  width: 100%;
-}
-
-.usuario-box {
-  position: relative;
-}
-
-.boton-usuario {
-  background-color: var(--color-acento) !important;
-}
-
-.menu-desplegable {
-  position: absolute;
-  top: 110%;
-  left: 0;
-  background-color: var(--color-superficie);
-  border-radius: var(--radio-borde);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  padding: 0.5rem;
-  z-index: 100;
-  min-width: 200px;
-}
-
-.menu-desplegable a {
-  display: block;
-  text-decoration: none;
-  color: var(--color-texto);
-  padding: 0.6rem 1rem;
-  border-radius: var(--radio-borde);
-  font-size: 0.9rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.menu-desplegable a:hover {
-  background-color: var(--color-superficie-clara);
 }
 
 @media (max-width: 768px) {
