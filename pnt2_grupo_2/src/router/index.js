@@ -18,9 +18,9 @@ const routes = [
     component: HomeView,
   },
   {
-    path:"/cartelera/:id",
-    name:"pelicula-detalle",
-    component:()=>import("../view/PeliculaDetalleView.vue")
+    path: "/cartelera/:id",
+    name: "pelicula-detalle",
+    component: () => import("../view/PeliculaDetalleView.vue"),
   },
   {
     path: "/Peliculas",
@@ -55,20 +55,20 @@ const routes = [
     component: RegistroView,
   },
   {
-  path: "/sobre-nosotros",
-  name: "SobreNosotros",
-  component: SobreNosotros,
-},
-{
-  path: "/politicas-privacidad",
-  name: "PoliticasPrivacidad",
-  component: PoliticasPrivacidad,
-},
-{
-  path: "/terminos-condiciones",
-  name: "TerminosCondiciones",
-  component: TerminosCondiciones,
-},
+    path: "/sobre-nosotros",
+    name: "SobreNosotros",
+    component: SobreNosotros,
+  },
+  {
+    path: "/politicas-privacidad",
+    name: "PoliticasPrivacidad",
+    component: PoliticasPrivacidad,
+  },
+  {
+    path: "/terminos-condiciones",
+    name: "TerminosCondiciones",
+    component: TerminosCondiciones,
+  },
   {
     path: "/admin",
     name: "Admin",
@@ -83,6 +83,12 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return { top: 0 };
+  },
 });
 
 router.beforeEach((to, from) => {
