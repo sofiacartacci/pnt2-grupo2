@@ -37,7 +37,7 @@
           <div class="poster-wrapper">
             <img
               class="pelicula-poster"
-              :src="`/src/assets/${pelicula.poster}`"
+              :src="`/src/assets/Images/${pelicula.poster}`"
               :alt="pelicula.titulo"
             />
             <VideoPlayerPopup :pelicula="pelicula" @click.prevent />
@@ -102,7 +102,7 @@ onMounted(async () => {
 const peliculasFiltradas = computed(() => {
   return peliculas.value.filter((p) => {
     const coincideBusqueda = normalizar(p.titulo).includes(
-      normalizar(query.value)
+      normalizar(query.value),
     );
     const coincideGenero =
       !filtroGenero.value || p.genero === filtroGenero.value;

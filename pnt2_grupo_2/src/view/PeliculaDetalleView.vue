@@ -24,7 +24,20 @@ function formatoFecha(fechaApi) {
   const dia = fechaApi.slice(4, 6);
   const fecha = new Date(anio, mes - 1, dia);
   const dias = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-  const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+  const meses = [
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic",
+  ];
   return `${dias[fecha.getDay()]} ${dia}/${meses[fecha.getMonth()]}`;
 }
 
@@ -44,7 +57,7 @@ const cargarFunciones = async () => {
   }
 
   const funciones = (await getFunciones()).filter(
-    (f) => f?.peliculaId == id && String(f.cineId) === String(cineId)
+    (f) => f?.peliculaId == id && String(f.cineId) === String(cineId),
   );
 
   const agrupado = funciones.reduce((acc, f) => {
@@ -69,14 +82,14 @@ watch(
   () => {
     cargarPelicula();
     cargarFunciones();
-  }
+  },
 );
 
 watch(
   () => cineStore.cineSeleccionado,
   () => {
     cargarFunciones();
-  }
+  },
 );
 
 function abrirTrailer() {
@@ -98,7 +111,7 @@ function irACines() {
 
       <div class="poster-container">
         <img
-          :src="`/src/assets/${pelicula.poster}`"
+          :src="`/src/assets/Images/${pelicula.poster}`"
           alt="Poster"
           class="poster-image"
         />
@@ -276,7 +289,9 @@ function irACines() {
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
   white-space: nowrap;
 }
 

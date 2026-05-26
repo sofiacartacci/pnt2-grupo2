@@ -12,10 +12,56 @@
 
         <input v-model="email" type="email" placeholder="Correo electrónico*" />
 
-        <div class="password-container">
-          <input v-model="password" type="password" placeholder="Contraseña*" />
-
-          <span class="eye-icon">👁</span>
+        <div class="input-password-wrapper">
+          <input
+            v-model="password"
+            :type="mostrarPassword ? 'text' : 'password'"
+            placeholder="Contraseña*"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            @click="mostrarPassword = !mostrarPassword"
+            :aria-label="
+              mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+            "
+          >
+            <svg
+              v-if="!mostrarPassword"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
+              />
+              <path
+                d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"
+              />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
+          </button>
         </div>
 
         <a href="#" class="forgot-password"> Olvidé mi contraseña </a>
@@ -48,6 +94,7 @@ const authStore = useAuthStore();
 
 const email = ref("");
 const password = ref("");
+const mostrarPassword = ref(false);
 
 async function iniciarSesion() {
   await authStore.login(email.value, password.value);
@@ -159,25 +206,32 @@ function irARegistro() {
   color: #aab8c5;
 }
 
-.password-container {
+.input-password-wrapper {
   position: relative;
-
   display: flex;
+  align-items: center;
 }
 
-.password-container input {
+.input-password-wrapper input {
   width: 100%;
-
-  padding-right: 48px;
+  padding-right: 50px !important;
 }
 
-.eye-icon {
+.toggle-password {
   position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5a6e7e;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: auto;
+}
 
-  right: 18px;
-  top: 18px;
-
-  font-size: 14px;
+.toggle-password:hover {
+  color: white;
 }
 
 .forgot-password {

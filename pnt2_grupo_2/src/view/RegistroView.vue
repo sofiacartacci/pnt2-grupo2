@@ -160,7 +160,7 @@
     <div class="registro-right">
       <img
         class="registro-imagen"
-        src="@/assets/CinemaortRegistro.png"
+        src="@/assets/Images/CinemaortRegistro.png"
         alt="imagen registro"
       />
     </div>
@@ -353,7 +353,7 @@ function volverHome() {
   background: none;
   border: none;
   cursor: pointer;
-  color: #aab8c5;
+  color: #5a6e7e;
   padding: 0;
   display: flex;
   align-items: center;

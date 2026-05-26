@@ -1,13 +1,14 @@
 <script setup>
 import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import LoginPopup from "./components/LoginPopup.vue";
-import { useAuthStore } from "./stores/authStore";
+import { useAuthStore } from "./stores/authStore.js";
 import Footer from "./components/Footer.vue";
 
 const authStore = useAuthStore();
 const mostrarLogin = ref(false);
 const route = useRoute();
+const router = useRouter();
 
 watch(
   () => route.query.login,
@@ -29,6 +30,7 @@ function cerrarLogin() {
 
 function cerrarSesion() {
   authStore.logout();
+  router.push("/");
 }
 </script>
 
@@ -37,7 +39,11 @@ function cerrarSesion() {
     <header>
       <div class="header-wrapper">
         <RouterLink to="/" class="logo-section">
-          <img src="https://www.ort.edu.ar/img/LogoOrtArgWeb2017.jpg" alt="ORT Logo" class="ort-logo" />
+          <img
+            src="https://www.ort.edu.ar/img/LogoOrtArgWeb2017.jpg"
+            alt="ORT Logo"
+            class="ort-logo"
+          />
         </RouterLink>
 
         <nav class="nav-center">
@@ -50,7 +56,9 @@ function cerrarSesion() {
         </nav>
 
         <div class="nav-right">
-          <button v-if="!authStore.isLoggedIn" @click="abrirLogin">Login</button>
+          <button v-if="!authStore.isLoggedIn" @click="abrirLogin">
+            Login
+          </button>
 
           <div v-else class="usuario-box">
             <span class="nombre-usuario">{{ authStore.user.nombre }}</span>
