@@ -6,17 +6,19 @@
         :style="{ transform: `translateX(-${indiceActual * 100}%)` }"
       >
         <img
-          v-for="(img, i) in imagenes"
-          :key="i"
-          :src="img.src"
-          :alt="img.alt"
+          v-for="pelicula in peliculasBanner"
+          :key="pelicula.id"
+          :src="`/src/assets/Images/${pelicula.banner}`"
+          :alt="pelicula.titulo"
           class="carrusel-slide"
+          @click="irADetalle(pelicula.id)"
         />
       </div>
 
       <button class="carrusel-btn prev" @click="anterior" aria-label="Anterior">
         &#8249;
       </button>
+
       <button
         class="carrusel-btn next"
         @click="siguiente"
@@ -27,7 +29,7 @@
 
       <div class="carrusel-dots">
         <span
-          v-for="(_, i) in imagenes"
+          v-for="(_, i) in peliculasBanner"
           :key="i"
           class="dot"
           :class="{ activo: i === indiceActual }"
@@ -40,34 +42,47 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
+import { getPeliculas } from "../services/PeliculasServices";
 
-import michael from "@/assets/michael.webp";
-import mortal from "@/assets/mortal.webp";
-import diablo from "@/assets/diablo moda.webp";
-
-const imagenes = [
-  { src: michael, alt: "Michael" },
-  { src: mortal, alt: "Mortal" },
-  { src: diablo, alt: "Diablo Moda" },
-];
-
+const router = useRouter();
+const peliculasBanner = ref([]);
 const indiceActual = ref(0);
+
 let intervalo = null;
 
+async function cargarPeliculasBanner() {
+  const peliculas = await getPeliculas();
+
+  peliculasBanner.value = peliculas.filter((pelicula) => pelicula.banner);
+}
+
 function siguiente() {
-  indiceActual.value = (indiceActual.value + 1) % imagenes.length;
+  if (peliculasBanner.value.length > 0) {
+    indiceActual.value =
+      (indiceActual.value + 1) % peliculasBanner.value.length;
+  }
 }
 
 function anterior() {
-  indiceActual.value =
-    (indiceActual.value - 1 + imagenes.length) % imagenes.length;
+  if (peliculasBanner.value.length > 0) {
+    indiceActual.value =
+      (indiceActual.value - 1 + peliculasBanner.value.length) %
+      peliculasBanner.value.length;
+  }
 }
 
 function irA(i) {
   indiceActual.value = i;
 }
 
-onMounted(() => {
+function irADetalle(id) {
+  router.push(`/cartelera/${id}`);
+}
+
+onMounted(async () => {
+  await cargarPeliculasBanner();
+
   intervalo = setInterval(siguiente, 4000);
 });
 
@@ -101,6 +116,7 @@ onUnmounted(() => {
   height: auto;
   display: block;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .carrusel-btn {

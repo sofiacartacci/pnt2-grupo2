@@ -160,7 +160,7 @@
     <div class="registro-right">
       <img
         class="registro-imagen"
-        src="@/assets/CinemaortRegistro.png"
+        src="@/assets/Images/CinemaortRegistro.png"
         alt="imagen registro"
       />
     </div>

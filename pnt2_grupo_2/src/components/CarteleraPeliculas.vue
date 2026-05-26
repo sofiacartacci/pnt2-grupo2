@@ -16,7 +16,9 @@
 
       <select v-model="filtroClasificacion" class="filtro-select">
         <option value="">Todas las clasificaciones</option>
-        <option v-for="c in clasificaciones" :key="c" :value="c">{{ c }}</option>
+        <option v-for="c in clasificaciones" :key="c" :value="c">
+          {{ c }}
+        </option>
       </select>
     </div>
 
@@ -34,7 +36,7 @@
         <article class="pelicula-card">
           <img
             class="pelicula-poster"
-            :src="`/src/assets/${pelicula.poster}`"
+            :src="`/src/assets/Images/${pelicula.poster}`"
             :alt="pelicula.titulo"
           />
 
@@ -48,7 +50,7 @@
 
             <p class="duracion">{{ pelicula.duracion }} min</p>
             <p class="genero">{{ pelicula.genero }}</p>
-            
+
             <button class="btn-trailer" @click.prevent="abrirDetalle(pelicula)">
               ▶ Ver más
             </button>
@@ -75,7 +77,9 @@ const filtroClasificacion = ref("");
 onMounted(async () => {
   peliculas.value = await getPeliculas();
   generos.value = [...new Set(peliculas.value.map((p) => p.genero))];
-  clasificaciones.value = [...new Set(peliculas.value.map((p) => p.clasificacion))];
+  clasificaciones.value = [
+    ...new Set(peliculas.value.map((p) => p.clasificacion)),
+  ];
 });
 
 const peliculasFiltradas = computed(() => {

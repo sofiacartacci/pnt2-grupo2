@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 
-import HomeView from "../view/HomeView.vue";
-import RegistroView from "../view/RegistroView.vue";
-import Peliculas from "../view/Peliculas.vue";
-import butacas from "../view/butacas.vue";
-import Integrante4 from "../view/cines.vue";
+import HomeView from "../views/HomeView.vue";
+import RegistroView from "../views/RegistroView.vue";
+import Peliculas from "../views/Peliculas.vue";
+import butacas from "../views/Butacas.vue";
+import Integrante4 from "../views/Cines.vue";
 
 const routes = [
   {
@@ -14,9 +14,9 @@ const routes = [
     component: HomeView,
   },
   {
-    path:"/cartelera/:id",
-    name:"pelicula-detalle",
-    component:()=>import("../view/PeliculaDetalleView.vue")
+    path: "/cartelera/:id",
+    name: "pelicula-detalle",
+    component: () => import("../views/PeliculaDetalleView.vue"),
   },
   {
     path: "/Peliculas",
