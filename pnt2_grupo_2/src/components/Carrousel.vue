@@ -43,13 +43,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
-
 import { getPeliculas } from "../services/PeliculasServices";
 
 const router = useRouter();
-
 const peliculasBanner = ref([]);
-
 const indiceActual = ref(0);
 
 let intervalo = null;
@@ -57,7 +54,9 @@ let intervalo = null;
 async function cargarPeliculasBanner() {
   const peliculas = await getPeliculas();
 
-  peliculasBanner.value = peliculas.filter((pelicula) => pelicula.banner);
+  peliculasBanner.value = peliculas.filter(
+    (pelicula) => pelicula.banner && pelicula.destacada,
+  );
 }
 
 function siguiente() {
@@ -99,13 +98,17 @@ onUnmounted(() => {
   width: 100%;
   display: flex;
   justify-content: center;
+  background-color: #c1bfbf;
+  border-radius: 18px;
+  overflow: hidden;
 }
 
 .carrusel {
   position: relative;
   width: 100%;
+  height: 400px;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 18px;
 }
 
 .carrusel-track {
@@ -116,7 +119,7 @@ onUnmounted(() => {
 .carrusel-slide {
   min-width: 100%;
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   object-fit: cover;
 

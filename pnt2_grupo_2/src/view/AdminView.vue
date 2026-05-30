@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-
-import { getPeliculas } from "../services/PeliculasServices";
+import { getPeliculas, modificarPelicula } from "../services/PeliculasServices";
 import { getCompras } from "../services/ComprasServices";
 import { getFunciones } from "../services/FuncionesServices";
 
@@ -20,12 +19,14 @@ async function cargarDatos(esRefresco = false) {
   if (esRefresco) {
     refrescando.value = true;
   }
+
   try {
     const [pels, comps, funcs] = await Promise.all([
       getPeliculas(),
       getCompras(),
       getFunciones(),
     ]);
+
     peliculas.value = pels;
     compras.value = comps;
     funciones.value = funcs;
@@ -36,6 +37,28 @@ async function cargarDatos(esRefresco = false) {
   } finally {
     cargando.value = false;
     refrescando.value = false;
+  }
+}
+
+async function cambiarDestacada(pelicula) {
+  const peliculaActualizada = {
+    ...pelicula,
+    destacada: !pelicula.destacada,
+  };
+
+  try {
+    const peliculaModificada = await modificarPelicula(
+      pelicula.id,
+      peliculaActualizada,
+    );
+
+    const indice = peliculas.value.findIndex((p) => p.id === pelicula.id);
+
+    if (indice !== -1) {
+      peliculas.value[indice] = peliculaModificada;
+    }
+  } catch (e) {
+    error.value = "Hubo un problema al actualizar la película";
   }
 }
 
@@ -50,6 +73,7 @@ onUnmounted(() => {
 
 const horaActualizacion = computed(() => {
   if (!ultimaActualizacion.value) return "";
+
   return ultimaActualizacion.value.toLocaleTimeString("es-AR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -67,11 +91,13 @@ const cantidadCompras = computed(() => {
 
 const usuariosUnicos = computed(() => {
   const ids = compras.value.map((compra) => compra.usuarioId);
+
   return new Set(ids).size;
 });
 
 const promedioPorCompra = computed(() => {
   if (cantidadCompras.value === 0) return 0;
+
   return Math.round(ingresosTotales.value / cantidadCompras.value);
 });
 
@@ -114,6 +140,7 @@ const peoresPeliculas = computed(() => {
 
 const maxVentasPelicula = computed(() => {
   const max = Math.max(...ventasPorPelicula.value.map((p) => p.cantidad), 0);
+
   return max || 1;
 });
 
@@ -127,6 +154,7 @@ function obtenerMes(fechaStr) {
   if (fechaStr.length === 6) {
     const año = "20" + fechaStr.slice(0, 2);
     const mes = fechaStr.slice(2, 4);
+
     return `${año}-${mes}`;
   }
 
@@ -135,9 +163,48 @@ function obtenerMes(fechaStr) {
 
 function nombreMes(mesStr) {
   if (!mesStr || mesStr === "Sin fecha") return mesStr;
+
   const [año, mes] = mesStr.split("-");
-  const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+  const meses = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
   return `${meses[parseInt(mes) - 1]} ${año}`;
+}
+
+function nombreMesCorto(mesStr) {
+  if (!mesStr || mesStr === "Sin fecha") return mesStr;
+
+  const [año, mes] = mesStr.split("-");
+
+  const meses = [
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic",
+  ];
+
+  return `${meses[parseInt(mes) - 1]}-${año.slice(-2)}`;
 }
 
 const comprasPorMes = computed(() => {
@@ -159,7 +226,164 @@ const comprasPorMes = computed(() => {
 
 const maxIngresosMes = computed(() => {
   const max = Math.max(...comprasPorMes.value.map((m) => m.ingresos), 0);
+
   return max || 1;
+});
+
+const chartOptions = computed(() => {
+  return {
+    chart: {
+      type: "bar",
+      toolbar: {
+        show: false,
+      },
+    },
+    colors: ["#1e88c4"],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "vertical",
+        shadeIntensity: 0.4,
+        gradientToColors: ["#7cb342"],
+        inverseColors: false,
+        opacityFrom: 1,
+        opacityTo: 0.85,
+        stops: [0, 100],
+      },
+    },
+    plotOptions: {
+      bar: {
+        borderRadius: 6,
+        columnWidth: "55%",
+        dataLabels: {
+          position: "top",
+        },
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: (val) => "$" + val.toLocaleString("es-AR"),
+      offsetY: -22,
+      style: {
+        fontSize: "11px",
+        fontWeight: "700",
+        colors: ["#1a3c5e"],
+      },
+      background: {
+        enabled: false,
+      },
+    },
+    xaxis: {
+      categories: comprasPorMes.value.map((fila) => nombreMesCorto(fila.mes)),
+    },
+    grid: {
+      borderColor: "#e1e8ef",
+    },
+    yaxis: {
+      labels: {
+        show: false,
+      },
+    },
+    legend: {
+      show: false,
+    },
+  };
+});
+
+const chartSeries = computed(() => {
+  return [
+    {
+      name: "Ingresos",
+      data: comprasPorMes.value.map((fila) => fila.ingresos),
+    },
+  ];
+});
+
+const ventasPorGenero = computed(() => {
+  const conteo = {};
+
+  compras.value.forEach((compra) => {
+    const funcion = funciones.value.find((f) => f.id === compra.funcionId);
+
+    if (funcion) {
+      const pelicula = peliculas.value.find((p) => p.id === funcion.peliculaId);
+
+      if (pelicula) {
+        if (!conteo[pelicula.genero]) {
+          conteo[pelicula.genero] = 0;
+        }
+
+        conteo[pelicula.genero]++;
+      }
+    }
+  });
+
+  return Object.entries(conteo).map(([genero, cantidad]) => ({
+    genero,
+    cantidad,
+  }));
+});
+
+const ventasGeneroOptions = computed(() => {
+  return {
+    labels: ventasPorGenero.value.map((fila) => fila.genero),
+    legend: {
+      position: "right",
+      fontSize: "11px",
+      itemMargin: {
+        vertical: 2,
+      },
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "50%",
+        },
+      },
+    },
+  };
+});
+
+const ventasGeneroSeries = computed(() => {
+  return ventasPorGenero.value.map((fila) => fila.cantidad);
+});
+
+const ventasPeliculaTreemapOptions = computed(() => {
+  return {
+    chart: {
+      type: "treemap",
+      toolbar: { show: false },
+    },
+    legend: { show: false },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: "15px",
+        fontWeight: "700",
+      },
+      formatter: function (text, op) {
+        return [text, op.value + " ventas"];
+      },
+    },
+    plotOptions: {
+      treemap: {
+        distributed: true,
+        enableShades: false,
+      },
+    },
+  };
+});
+
+const ventasPeliculaTreemapSeries = computed(() => {
+  return [
+    {
+      data: ventasPorPelicula.value.map((pelicula) => ({
+        x: pelicula.titulo,
+        y: pelicula.cantidad,
+      })),
+    },
+  ];
 });
 </script>
 
@@ -167,14 +391,15 @@ const maxIngresosMes = computed(() => {
   <div class="admin-page">
     <div class="header-panel">
       <div>
-        <h1>Panel del Administrador</h1>
-        <p class="subtitulo">Resumen de actividad del cine en tiempo real</p>
+        <h1>Panel de Administrador</h1>
       </div>
+
       <div class="header-acciones">
         <span v-if="ultimaActualizacion" class="ultima-act">
           <span class="dot" :class="{ pulse: refrescando }"></span>
           Última actualización: {{ horaActualizacion }}
         </span>
+
         <button
           class="btn-refresh"
           :disabled="refrescando"
@@ -192,27 +417,67 @@ const maxIngresosMes = computed(() => {
     <div v-else>
       <div class="cards">
         <div class="card card-1">
-          <div class="card-icon">💰</div>
+          <div class="card-top">
+            <div class="card-icon">💰</div>
+            <p class="card-valor">
+              ${{ ingresosTotales.toLocaleString("es-AR") }}
+            </p>
+          </div>
           <p class="card-label">Ingresos totales</p>
-          <p class="card-valor">${{ ingresosTotales.toLocaleString("es-AR") }}</p>
         </div>
 
         <div class="card card-2">
-          <div class="card-icon">🎟️</div>
+          <div class="card-top">
+            <div class="card-icon">🎟️</div>
+            <p class="card-valor">{{ cantidadCompras }}</p>
+          </div>
           <p class="card-label">Compras realizadas</p>
-          <p class="card-valor">{{ cantidadCompras }}</p>
         </div>
 
         <div class="card card-3">
-          <div class="card-icon">👥</div>
+          <div class="card-top">
+            <div class="card-icon">👥</div>
+            <p class="card-valor">{{ usuariosUnicos }}</p>
+          </div>
           <p class="card-label">Usuarios únicos</p>
-          <p class="card-valor">{{ usuariosUnicos }}</p>
         </div>
 
         <div class="card card-4">
-          <div class="card-icon">📊</div>
+          <div class="card-top">
+            <div class="card-icon">📊</div>
+            <p class="card-valor">
+              ${{ promedioPorCompra.toLocaleString("es-AR") }}
+            </p>
+          </div>
           <p class="card-label">Ticket promedio</p>
-          <p class="card-valor">${{ promedioPorCompra.toLocaleString("es-AR") }}</p>
+        </div>
+      </div>
+
+      <div class="graficos-grid">
+        <div class="widget grafico-widget">
+          <div class="widget-header">
+            <h2>🎭 Ventas por género</h2>
+          </div>
+
+          <apexchart
+            type="donut"
+            height="220"
+            :options="ventasGeneroOptions"
+            :series="ventasGeneroSeries"
+          />
+        </div>
+
+        <div class="widget grafico-widget">
+          <div class="widget-header">
+            <h2>📊 Ingresos por mes</h2>
+          </div>
+
+          <apexchart
+            type="bar"
+            height="220"
+            :options="chartOptions"
+            :series="chartSeries"
+          />
         </div>
       </div>
 
@@ -221,6 +486,7 @@ const maxIngresosMes = computed(() => {
           <div class="widget-header">
             <h2>🏆 Top 5 películas más vendidas</h2>
           </div>
+
           <div class="ranking">
             <div
               v-for="(pelicula, index) in top5Peliculas"
@@ -230,16 +496,22 @@ const maxIngresosMes = computed(() => {
               <div class="ranking-pos" :class="`pos-${index + 1}`">
                 {{ index + 1 }}
               </div>
+
               <div class="ranking-info">
                 <div class="ranking-titulo">{{ pelicula.titulo }}</div>
                 <div class="ranking-genero">{{ pelicula.genero }}</div>
+
                 <div class="barra-bg">
                   <div
                     class="barra-fill"
-                    :style="{ width: (pelicula.cantidad / maxVentasPelicula) * 100 + '%' }"
+                    :style="{
+                      width:
+                        (pelicula.cantidad / maxVentasPelicula) * 100 + '%',
+                    }"
                   ></div>
                 </div>
               </div>
+
               <div class="ranking-stats">
                 <div class="ranking-cantidad">{{ pelicula.cantidad }}</div>
                 <div class="ranking-ingresos">
@@ -254,24 +526,25 @@ const maxIngresosMes = computed(() => {
           <div class="widget-header">
             <h2>📈 Ingresos por mes</h2>
           </div>
+
           <div class="meses-chart">
-            <div
-              v-for="fila in comprasPorMes"
-              :key="fila.mes"
-              class="mes-item"
-            >
+            <div v-for="fila in comprasPorMes" :key="fila.mes" class="mes-item">
               <div class="mes-info">
                 <span class="mes-nombre">{{ nombreMes(fila.mes) }}</span>
                 <span class="mes-ingresos">
                   ${{ fila.ingresos.toLocaleString("es-AR") }}
                 </span>
               </div>
+
               <div class="barra-bg">
                 <div
                   class="barra-fill barra-verde"
-                  :style="{ width: (fila.ingresos / maxIngresosMes) * 100 + '%' }"
+                  :style="{
+                    width: (fila.ingresos / maxIngresosMes) * 100 + '%',
+                  }"
                 ></div>
               </div>
+
               <div class="mes-detalle">{{ fila.cantidad }} compras</div>
             </div>
           </div>
@@ -281,6 +554,7 @@ const maxIngresosMes = computed(() => {
           <div class="widget-header">
             <h2>⚠️ Películas con menos ventas</h2>
           </div>
+
           <table class="tabla">
             <thead>
               <tr>
@@ -290,11 +564,16 @@ const maxIngresosMes = computed(() => {
                 <th>Ingresos</th>
               </tr>
             </thead>
+
             <tbody>
               <tr v-for="pelicula in peoresPeliculas" :key="pelicula.id">
                 <td>{{ pelicula.titulo }}</td>
-                <td><span class="badge">{{ pelicula.genero }}</span></td>
-                <td><span class="num-pill">{{ pelicula.cantidad }}</span></td>
+                <td>
+                  <span class="badge">{{ pelicula.genero }}</span>
+                </td>
+                <td>
+                  <span class="num-pill">{{ pelicula.cantidad }}</span>
+                </td>
                 <td class="ingresos-cell">
                   ${{ pelicula.ingresos.toLocaleString("es-AR") }}
                 </td>
@@ -308,6 +587,7 @@ const maxIngresosMes = computed(() => {
             <h2>🎬 Películas en cartelera</h2>
             <span class="widget-badge">{{ peliculas.length }} títulos</span>
           </div>
+
           <table class="tabla">
             <thead>
               <tr>
@@ -317,15 +597,39 @@ const maxIngresosMes = computed(() => {
                 <th>Duración</th>
               </tr>
             </thead>
+
             <tbody>
               <tr v-for="pelicula in peliculas" :key="pelicula.id">
                 <td class="id-cell">#{{ pelicula.id }}</td>
                 <td>{{ pelicula.titulo }}</td>
-                <td><span class="badge">{{ pelicula.genero }}</span></td>
-                <td>{{ pelicula.duracion }} min</td>
+                <td>
+                  <span class="badge">{{ pelicula.genero }}</span>
+                </td>
+                <td class="duracion-cell">
+                  <span>{{ pelicula.duracion }} min</span>
+                  <button
+                    class="star-button"
+                    :class="{ activa: pelicula.destacada }"
+                    @click="cambiarDestacada(pelicula)"
+                  >
+                    {{ pelicula.destacada ? "★" : "☆" }}
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="widget treemap-widget">
+          <div class="widget-header">
+            <h2>🎬 Ventas por película</h2>
+          </div>
+
+          <apexchart
+            type="treemap"
+            height="300"
+            :options="ventasPeliculaTreemapOptions"
+            :series="ventasPeliculaTreemapSeries"
+          />
         </div>
       </div>
     </div>
@@ -333,15 +637,6 @@ const maxIngresosMes = computed(() => {
 </template>
 
 <style scoped>
-/* Paleta ORT:
-   - Azul ORT principal:    #1e88c4
-   - Azul ORT oscuro:       #1a3c5e
-   - Verde ORT:             #7cb342
-   - Verde ORT oscuro:      #558b2f
-   - Gris fondo:            #f5f7fa
-   - Gris texto secundario: #6b7c93
-*/
-
 .admin-page {
   padding: 2rem;
   max-width: 1400px;
@@ -401,8 +696,14 @@ const maxIngresosMes = computed(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .btn-refresh {
@@ -438,7 +739,6 @@ const maxIngresosMes = computed(() => {
   color: #e74c3c;
 }
 
-/* KPI Cards con la paleta ORT */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -447,28 +747,48 @@ const maxIngresosMes = computed(() => {
 }
 
 .card {
-  padding: 1.5rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 12px;
   color: white;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(26, 60, 94, 0.15);
   transition: transform 0.2s ease;
+  text-align: center;
 }
 
 .card:hover {
   transform: translateY(-4px);
 }
 
-.card-1 { background: linear-gradient(135deg, #1e88c4 0%, #1a3c5e 100%); }
-.card-2 { background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%); }
-.card-3 { background: linear-gradient(135deg, #1a3c5e 0%, #0d2540 100%); }
-.card-4 { background: linear-gradient(135deg, #4fa8d8 0%, #1e88c4 100%); }
+.card-1 {
+  background: linear-gradient(135deg, #1e88c4 0%, #1a3c5e 100%);
+}
+
+.card-2 {
+  background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+}
+
+.card-3 {
+  background: linear-gradient(135deg, #94a1ed 0%, #581ce3 100%);
+}
+
+.card-4 {
+  background: linear-gradient(135deg, #4fa8d8 0%, #1e88c4 100%);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
+}
 
 .card-icon {
   font-size: 2rem;
-  margin-bottom: 0.5rem;
   opacity: 0.95;
+  flex-shrink: 0;
 }
 
 .card-label {
@@ -481,9 +801,29 @@ const maxIngresosMes = computed(() => {
 }
 
 .card-valor {
-  margin: 0.4rem 0 0 0;
+  margin: 0;
   font-size: 1.8rem;
   font-weight: 900;
+}
+
+.graficos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.grafico-widget {
+  min-height: unset;
+  overflow: hidden;
+}
+
+.treemap-widget {
+  grid-column: 1 / -1;
+}
+
+.treemap-widget {
+  margin-bottom: 2rem;
 }
 
 .dashboard-grid {
@@ -525,7 +865,6 @@ const maxIngresosMes = computed(() => {
   font-weight: 700;
 }
 
-/* Top 5 ranking */
 .ranking {
   display: flex;
   flex-direction: column;
@@ -559,10 +898,22 @@ const maxIngresosMes = computed(() => {
   flex-shrink: 0;
 }
 
-.pos-1 { background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%); }
-.pos-2 { background: linear-gradient(135deg, #1e88c4 0%, #1a3c5e 100%); }
-.pos-3 { background: linear-gradient(135deg, #4fa8d8 0%, #1e88c4 100%); }
-.pos-4, .pos-5 { background: linear-gradient(135deg, #6b7c93 0%, #4a5568 100%); }
+.pos-1 {
+  background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+}
+
+.pos-2 {
+  background: linear-gradient(135deg, #1e88c4 0%, #1a3c5e 100%);
+}
+
+.pos-3 {
+  background: linear-gradient(135deg, #4fa8d8 0%, #1e88c4 100%);
+}
+
+.pos-4,
+.pos-5 {
+  background: linear-gradient(135deg, #6b7c93 0%, #4a5568 100%);
+}
 
 .ranking-info {
   flex: 1;
@@ -621,7 +972,6 @@ const maxIngresosMes = computed(() => {
   margin-top: 0.2rem;
 }
 
-/* Meses chart */
 .meses-chart {
   display: flex;
   flex-direction: column;
@@ -660,7 +1010,6 @@ const maxIngresosMes = computed(() => {
   color: #6b7c93;
 }
 
-/* Tablas */
 .tabla {
   width: 100%;
   border-collapse: collapse;
@@ -720,5 +1069,28 @@ const maxIngresosMes = computed(() => {
   color: #6b7c93;
   font-weight: 700;
   font-size: 0.85rem;
+}
+
+.duracion-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.star-button {
+  border: none;
+  background: transparent;
+  color: #b8c2cc;
+  font-size: 35px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.star-button.activa {
+  color: #f5c542;
+}
+
+.star-button:hover {
+  transform: scale(1.15);
 }
 </style>
