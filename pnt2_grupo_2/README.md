@@ -1,119 +1,72 @@
 # CineORT
 
-Trabajo Práctico Integrador para la materia Programación en Nuevas Tecnologías 2 (PNT2) del Instituto Tecnológico ORT Argentina.
+Aplicación web para una cadena de cines, hecha como trabajo integrador de la materia Programación en Nuevas Tecnologías 2 (PNT2) en el Instituto Tecnológico ORT.
 
-CineORT es una aplicación web de gestión de cines. Permite explorar la cartelera, ver detalles de películas, seleccionar butacas y realizar compras de entradas. Cuenta con un panel de administración para la gestión interna.
+La idea es básicamente lo que uno esperaría de la página de un cine: ver la cartelera, entrar al detalle de una película, elegir una función, seleccionar butacas y comprar la entrada. Aparte hay un panel de administración con estadísticas de ventas.
 
----
+## Integrantes
 
-## Stack tecnológico
+- Eduardo Calaza
+- Juan Ferreyra
+- Martín Méndez
+- Sofía Cartacci
 
-- **Vue.js 3** como framework principal
-- **Vite** como build tool y servidor de desarrollo
-- **Vue Router** para la navegación SPA
-- **Pinia** para el manejo de estado global
-- **MockAPI** como backend simulado (REST)
-- **CSS3** con variables para el diseño responsive
+Cada uno tomó una parte del proyecto, pero la app está pensada para funcionar como un solo flujo de punta a punta.
 
----
+## Qué hace
 
-## Funcionalidades
+- Cartelera con las películas en cartel y su detalle (sinopsis, trailer, funciones por día).
+- Selección de cine. La app maneja dos sedes (Almagro y Belgrano) y la elección queda guardada para el resto de la navegación.
+- Selección de butacas con una grilla interactiva: cada butaca puede estar libre, seleccionada u ocupada, y el total se actualiza solo a medida que vas eligiendo.
+- Checkout y ticket de compra.
+- Registro e inicio de sesión, con rutas protegidas según si sos cliente o administrador.
+- Panel de admin con métricas del negocio: ingresos totales, cantidad de compras, ticket promedio, ranking de películas más y menos vendidas, ventas por género e ingresos por mes.
 
-Para usuarios:
-- Exploración de la cartelera con carrusel de películas destacadas
-- Vista detallada de cada película con trailer y funciones disponibles
-- Filtrado de funciones por día
-- Selección interactiva de butacas
-- Flujo de compra completo
-- Registro e inicio de sesión
+## Tecnologías
 
-Para administradores:
-- Panel de administración protegido por rol
-- Gestión de películas, funciones y cines
+- Vue 3 (Composition API con `<script setup>`)
+- Vite
+- Pinia para el manejo de estado
+- Vue Router
+- ApexCharts para los gráficos del panel de admin
+- MockAPI como backend simulado
 
-Generales:
-- Autenticación con dos roles (cliente y admin)
-- Rutas protegidas mediante route guards
-- Persistencia de sesión en localStorage
+## Sobre la persistencia
 
----
+Usamos MockAPI para simular el backend. Un detalle que nos comió bastante tiempo: el plan gratuito deja solo 2 recursos por proyecto, así que tuvimos que repartir las entidades en varios proyectos de MockAPI (películas y usuarios por un lado, compras y funciones por otro, y los cines aparte). Las URLs están en los archivos de `src/services`.
 
-## Estructura del proyecto
-pnt2_grupo_2/
-├── public/
-├── src/
-│   ├── assets/              Imágenes, logos y estilos globales
-│   ├── components/          Componentes reutilizables
-│   ├── router/              Configuración de Vue Router
-│   ├── services/            Capa de comunicación con la API
-│   ├── stores/              Estado global con Pinia
-│   ├── view/                Vistas principales (páginas)
-│   ├── App.vue
-│   └── main.js
-├── index.html
-├── vite.config.js
-└── package.json
+Toda la comunicación con la API pasa por la capa de services. Los stores consumen esos services y los componentes consumen los stores, así que ningún componente le pega directo a la API.
 
-### Decisiones de organización
+## Cómo levantarlo
 
-La carpeta `services/` aísla todas las llamadas a la API. Las vistas y los stores no hacen `fetch` directo, lo que permitiría cambiar el backend en el futuro sin tocar la UI.
-
-La carpeta `stores/` centraliza el estado global usando Pinia, separado por dominio: `AuthStore` para autenticación, `cineStore` para películas y cines, y `comprasStore` para el flujo de compra.
-
-Se distinguen `components/` (piezas reutilizables) de `view/` (páginas completas asociadas a una ruta).
-
-En `router/index.js` las rutas protegidas se declaran mediante `meta: { requiereLogin, requiereAdmin }`, evitando repetir lógica de validación en cada vista.
-
----
-
-## Instalación
-
-Requisitos previos: Node.js (versión LTS recomendada) y npm.
+Necesitás Node instalado (versión 20 o superior).
 
 ```sh
-git clone <url-del-repo>
-cd pnt2_grupo_2
 npm install
+npm run dev
 ```
 
-### Comandos disponibles
+Eso levanta el servidor.
+
+Para generar el build de producción:
 
 ```sh
-npm run dev       # Servidor de desarrollo con hot-reload
-npm run build     # Build de producción
-npm run preview   # Preview del build
+npm run build
 ```
 
-Una vez levantado el servidor, abrir http://localhost:5173 en el navegador.
+Un par de cosas a tener en cuenta:
 
----
+- `node_modules` no está en el repo, así que después de clonar o de cambiar de rama hay que correr `npm install` de nuevo.
+- Como la sesión y el cine elegido se guardan en localStorage, si en algún momento ves datos raros conviene limpiar el localStorage del navegador y volver a entrar.
 
-## API
+## Estructura
 
-El backend está simulado con MockAPI. Debido a la limitación del plan gratuito (2 recursos por proyecto), la API se divide en 3 proyectos:
-
-Proyecto A — Usuarios y Películas:
-- `https://6a03b7662afe8349b4b5717d.mockapi.io/api/v1/usuarios`
-- `https://6a03b7662afe8349b4b5717d.mockapi.io/api/v1/peliculas`
-
-Proyecto B — Funciones y Compras:
-- `https://6a03cd8b2afe8349b4b5823d.mockapi.io/api/v1/funciones`
-- `https://6a03cd8b2afe8349b4b5823d.mockapi.io/api/v1/compras`
-
-Proyecto C - Cines
-- `https://6a11d9c03e35d0f37ee3c133.mockapi.io/cines`
-
----
-
-## IDE recomendado
-
-VS Code con la extensión Vue (Official) instalada. Si se tenía Vetur, conviene deshabilitarla.
-
----
-
-## Equipo
-
-Grupo 2 — PNT2 — Instituto Tecnológico ORT Argentina
-
-Profesor: Gaspar De Carlo  
-Año: 2026
+```
+src/
+├── components/     componentes reutilizables (cartelera, carrousel, popups, etc.)
+├── services/       funciones que hablan con MockAPI
+├── stores/         stores de Pinia (auth, cine, compras)
+├── view/           las vistas / páginas
+├── router/         rutas y guards
+└── assets/         estilos e imágenes
+```
