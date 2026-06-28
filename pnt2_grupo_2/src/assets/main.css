@@ -1,35 +1,30 @@
-@import './base.css';
+:root {
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  /* Fondos */
+  --color-fondo: #0a1a2f;
+  --color-superficie: #132c46;
+  --color-superficie-clara: #1c3a5a;
+
+  /* Acentos */
+  --color-acento: #00a3e0;
+  --color-acento-hover: #0089bd;
+
+  /* Texto */
+  --color-texto: #ffffff;
+  --color-texto-secundario: #aab8c5;
+  --color-texto-sobre-claro: #003b7a;
+
+  /* Estados */
+  --color-error: #ff6b6b;
+  --color-exito: #4caf50;
+
+  /* Tipografía */
+--fuente-principal: "Lato", "Segoe UI", Roboto, sans-serif;
+
+  /* Bordes */
+  --radio-borde: 12px;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+body {
+  font-family: var(--fuente-principal);
 }
