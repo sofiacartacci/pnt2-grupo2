@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useComprasStore } from "../stores/comprasStore";
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../stores/AuthStore";
 
 const comprasStore = useComprasStore();
 const authStore = useAuthStore();

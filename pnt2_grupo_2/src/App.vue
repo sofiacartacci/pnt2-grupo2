@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import LoginPopup from "./components/LoginPopup.vue";
-import { useAuthStore } from "./stores/authStore.js";
+import { useAuthStore } from "./stores/AuthStore.js";
 import Footer from "./components/Footer.vue";
 
 const authStore = useAuthStore();
